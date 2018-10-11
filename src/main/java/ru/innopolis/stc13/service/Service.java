@@ -1,6 +1,6 @@
 package ru.innopolis.stc13.service;
 
-import ru.innopolis.stc13.utils.MD5Helper;
+import org.apache.log4j.Logger;
 import ru.innopolis.stc13.repository.dao.daoint.FlightDao;
 import ru.innopolis.stc13.repository.dao.daoint.UserDao;
 import ru.innopolis.stc13.repository.pojo.Flight;
@@ -8,12 +8,14 @@ import ru.innopolis.stc13.repository.pojo.FlightStatus;
 import ru.innopolis.stc13.repository.pojo.FlightType;
 import ru.innopolis.stc13.repository.pojo.User;
 import ru.innopolis.stc13.to.Restriction;
+import ru.innopolis.stc13.utils.MD5Helper;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class Service {
 
+    static final Logger LOGGER = Logger.getLogger(Service.class);
     private final UserDao userDao;
     private final FlightDao flightDao;
 
@@ -25,6 +27,7 @@ public class Service {
     public boolean checkAuth(String login, String password) {
         if (login != null) {
             User user = userDao.getUserByLogin(login);
+            LOGGER.info(String.format("add user by login %s", login));
             return user != null && user.getPassword().equals(MD5Helper.getMD5(password));
         }
         return false;
@@ -36,6 +39,7 @@ public class Service {
 
     public User getUserByLogin(String login) {
         if (login != null) {
+            LOGGER.info(String.format("add user by login %s", login));
             return userDao.getUserByLogin(login);
         }
         return null;
@@ -54,6 +58,7 @@ public class Service {
                     gateNumber,
                     parkingSpot,
                     FlightStatus.valueOf(status));
+            LOGGER.info(String.format("add flight %s for pilot %s", flight.getId(), pilotName));
             return flightDao.add(flight);
         }
         return false;
@@ -61,6 +66,7 @@ public class Service {
 
     public void update(String id, String gateNumber, String parkingSpot, String status) {
         if (id != null && status != null) {
+            LOGGER.info(String.format("update flight %s for status %s", id, status));
             flightDao.update(id, gateNumber, parkingSpot, status);
         }
     }
@@ -69,10 +75,12 @@ public class Service {
         if (id == null || id.isEmpty()) {
             return Collections.emptyList();
         }
+        LOGGER.info(String.format("get flights for pilot %s", id));
         return flightDao.getByPilot(id);
     }
 
     public List<Flight> getAll() {
+        LOGGER.info("get all flights");
         return flightDao.getAll();
     }
 
@@ -93,6 +101,7 @@ public class Service {
     }
 
     public Map<FlightStatus, Restriction> getRestrictions() {
+        LOGGER.info("get restrictions");
         return flightDao.getRestrictions();
     }
 }

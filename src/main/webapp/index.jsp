@@ -13,9 +13,9 @@
   %>
   <br>
   <form action="/login" method="post">
-    <h1>Login:</h1>
+    <h2>Login:</h2>
     <input type="text" name="login">
-    <h1>Password:</h1>
+    <h2>Password:</h2>
     <input type="text" name="password">
     <br>
     <br>
